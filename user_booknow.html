@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Bookings
+        </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="module" src="backend.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+ 
+    </head>
+    <body onload="inituser();searchrender();" style="background-color:antiquewhite">
+    <br><br>
+    <h3 style="text-align:center;font-weight:bolder;">Ticket Booking Portal</h3><br><br><hr><br>
+    <div class="row" style="width:98%;margin:auto;">
+        <div class="d-flex col-sm-12">
+            <div class="row" style="margin:auto">
+                <h4 style="text-align:center;">Search Flights</h4>
+            <input class="form-control me-2 col-sm-12" type="date" placeholder="Search" id="flightsearchdate" aria-label="Search">
+            <input class="form-control me-2 col-sm-12" type="time" id="flightsearchtime">
+            <button class="btn btn-outline-light bg-primary col-sm-12" onclick="searchflights()">Search Flights</button>
+        </div>
+    </div>
+    </div>
+    <br>
+    <hr>
+    <button type="button" id="viewbooking" class="btn btn-primary invisible" data-bs-toggle="modal" data-bs-target="#bookticket">
+    </button>
+    <div class="modal fade" id="bookticket" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="model1">Flight Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label>Flight Name</label>
+                        <input type="text" class="form-control" id="flightnamebook" disabled>
+                      </div>
+                      <div class="mb-3">
+                          <label>From</label>
+                          <input type="text" class="form-control" id="flightfrombook" disabled>
+                      </div>
+                      <div class="mb-3">
+                          <label>To</label>
+                          <input type="text" class="form-control" id="flighttobook" disabled>
+                      </div>
+                      <div class="mb-3">
+                          <label>Date</label>
+                          <input type="date" class="form-control" id="flightdatebook" disabled>
+                      </div>
+                      <div class="mb-3">
+                          <label>Time</label>
+                          <input type="time" class="form-control" id="flighttimebook" disabled>
+                      </div>
+                      <div class="mb-3">
+                        <label>Booking Name</label>
+                        <input type="text" class="form-control" id="namebook" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label>Booking Email</label>
+                        <input type="text" class="form-control" id="emailbook" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label>No. of Seats</label>
+                        <input type="number" class="form-control" id="numbook" max="5" min="1" value="1">
+                    </div>
+                  </form>
+                  <span id="warnings2" style="color:red;text-align: center;"></span><br><br>
+            </div>
+            <div class="modal-footer">
+            
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="flightbookclose">Close</button>
+              <button type="button" class="btn btn-success" id="updflight" onclick="bookflight()">Book Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="row" style="width:98%;margin:auto;">
+        <br><br>
+        <h3 style="font-weight:bolder;">Available Flights</h3>
+        <div id="flight-warnings"></div>
+        <div class="col-sm-12">
+            <ol class="list-group list-group-numbered" id="flight-bookings">
+                <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+        </div>
+    </ol>      
+        </div>
+    </div>
+    </body>
+</html>
