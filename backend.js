@@ -561,7 +561,8 @@ async function bookflight(){
     "name":user_name,
     "email":user_email,
     "seats":seats,
-    "booktime":d
+    "booktime":d,
+    "fid":bid
   },{merge:true}
   );
   qs= await getDocs(collection(db,"user-"+user_email));
@@ -572,7 +573,8 @@ async function bookflight(){
     "name":name.value,
     "date":date.value,
     "time":time.value,
-    "booktime":d
+    "booktime":d,
+    "fid":bid
   },{
     merge:true
   }
@@ -609,16 +611,51 @@ async function bookingsrenderinterval(){
     document.getElementById('booking-warnings').innerHTML="";
   }
   var list=document.getElementById('booking-history');
-  list.innerHTML="";
+  var temp="";
   var status=""
   for(let i=arr.length-1;i>=0;i--){
+    var flight=await getDoc(doc(db,"flight",arr[i]['fid']));
+    flight=flight.data();
+    if(flight['available']=='1'){
     if(new Date(arr[i]['date']+" "+arr[i]['time'])>new Date()){
       status="<span class='text-success' style='font-weight:bolder;'>Active</span>";
     }else{
       status="<span class='text-warning' style='font-weight:bolder;'>Expired</span>";
     }
-    list.innerHTML+="<li class='list-group-item' style='margin:10px'><br><br>&nbsp;&nbsp;&nbsp;&nbsp;<b>Flight Name : </b>"+arr[i]['name']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>Booking Time : </b>"+arr[i]['booktime']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>Departure Date : </b>"+arr[i]['date']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>Departure time : </b>"+arr[i]['time']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>From : </b>"+arr[i]['from']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>To : </b>"+arr[i]['to']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>Status : </b> "+status+"<br><br></li>";
+  }else{
+    status="<span class='text-danger' style='font-weight:bolder;'>Flight Cancelled</span>";
   }
+    temp+="<li class='list-group-item' style='margin:10px'><br><br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    if(arr[i]['name']==flight['name']){
+    temp+="<b>Flight Name : </b>"+arr[i]['name']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    }else{
+      temp+="<b>Flight Name : </b><del>"+arr[i]['name']+"</del>&nbsp;<ins>"+flight['name']+"</ins><br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
+    temp+="<b>Booking Time : </b>"+arr[i]['booktime']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    if(arr[i]['date']==flight['date']){
+    temp+="<b>Departure Date : </b>"+arr[i]['date']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>";
+    }else{
+      temp+="<b>Departure Date : </b><del>"+arr[i]['date']+"</del>&nbsp;<ins>"+flight['date']+"</ins><br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
+    if(arr[i]['time']==flight['time']){
+    temp+="<b>Departure time : </b>"+arr[i]['time']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    }else{
+      temp+="<b>Departure time : </b><del>"+arr[i]['time']+"</del>&nbsp;<ins>"+flight['time']+"</ins><br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
+    if(arr[i]['from']==flight['from']){
+    temp+="<b>From : </b>"+arr[i]['from']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    }else{
+      temp+="<b>From : </b><del>"+arr[i]['from']+"</del>&nbsp;<ins>"+flight['from']+"</ins><br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
+    if(arr[i]['to']==flight['to']){
+      temp+="<b>To : </b>"+arr[i]['to']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
+    else{
+      temp+="<b>To : </b><del>"+arr[i]['to']+"</del>&nbsp;<ins>"+flight['to']+"</ins><br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    }
+    temp+="<b>Status : </b> "+status+"<br><br></li>";
+  }
+  list.innerHTML=temp;
 }
 function bookingsrender(){
   setInterval(bookingsrenderinterval,4000);
