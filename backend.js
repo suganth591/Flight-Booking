@@ -291,6 +291,7 @@
     }
   }
   async function addflight(){
+    document.getElementById('addbtn').disabled=true;
     document.getElementById('warnings').innerHTML="<div class='spinner-border text-primary' role='status'><span class='visually-hidden'>Loading...</span></div>";
     var name=document.getElementById('flightname');
     var from=document.getElementById('flightfrom');
@@ -337,11 +338,13 @@
     date.value="";
     time.value="";
     document.getElementById('warnings').innerHTML="";
+    document.getElementById('addbtn').disabled=false;
     document.getElementById('flightaddclose').click();
   }else{
     document.getElementById('warnings').innerHTML="Date & Time can't be less than current time";
   }
 }
+document.getElementById('addbtn').disabled=false;
   }
   async function render(){
     const q = query(collection(db, "flight"));
@@ -537,6 +540,7 @@ async function bookticket(par){
   document.getElementById('viewbooking').click();
 }
 async function bookflight(){
+  document.getElementById('updflight').disabled=true;
   document.getElementById('warnings2').innerHTML="<div class='spinner-border text-primary' role='status'><span class='visually-hidden'>Loading...</span></div>";
   var name=document.getElementById('flightnamebook');
   var from=document.getElementById('flightfrombook');
@@ -548,9 +552,14 @@ async function bookflight(){
     var fli=await getDoc(doc(db,"flight",bid));
     fli=fli.data();
     var booked=fli['booked']*1+seats*1;
+    var nums="";
+    for(let i=fli['booked']*1+1;i<=fli['booked']*1+seats*1;i++){
+        nums+=i+" ";
+    }
     var ava=fli['count']-booked;
     if(ava<0){
       document.getElementById("warnings2").innerHTML=seats+" Seats not available";
+      document.getElementById('updflight').disabled=false;
       return;
     }
   var d=new Date().toLocaleString();
@@ -574,7 +583,9 @@ async function bookflight(){
     "date":date.value,
     "time":time.value,
     "booktime":d,
-    "fid":bid
+    "fid":bid,
+    "seats":seats,
+    "allocated":nums
   },{
     merge:true
   }
@@ -590,9 +601,11 @@ async function bookflight(){
   await sleep(2000);
   document.getElementById('warnings2').innerHTML="";
   document.getElementById('numbook').value=1;
+  document.getElementById('updflight').disabled=false;
   document.getElementById('flightbookclose').click();
 }else{
   document.getElementById("warnings2").innerHTML="You can not Book More than 5 seats at a time and should book Minimum One Seat";
+  document.getElementById('updflight').disabled=false;
 }
 }
 async function bookingsrenderinterval(){
@@ -625,7 +638,7 @@ async function bookingsrenderinterval(){
   }else{
     status="<span class='text-danger' style='font-weight:bolder;'>Flight Cancelled</span>";
   }
-    temp+="<li class='list-group-item' style='margin:10px'><br><br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    temp+="<li class='list-group-item ticket"+(i%3)+"' style='margin:10px'><br><br>&nbsp;&nbsp;&nbsp;&nbsp;";
     if(arr[i]['name']==flight['name']){
     temp+="<b>Flight Name : </b>"+arr[i]['name']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;";
     }else{
@@ -633,7 +646,7 @@ async function bookingsrenderinterval(){
     }
     temp+="<b>Booking Time : </b>"+arr[i]['booktime']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;";
     if(arr[i]['date']==flight['date']){
-    temp+="<b>Departure Date : </b>"+arr[i]['date']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;<b>";
+    temp+="<b>Departure Date : </b>"+arr[i]['date']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;";
     }else{
       temp+="<b>Departure Date : </b><del>"+arr[i]['date']+"</del>&nbsp;<ins>"+flight['date']+"</ins><br>&nbsp;&nbsp;&nbsp;&nbsp;";
     }
@@ -653,6 +666,8 @@ async function bookingsrenderinterval(){
     else{
       temp+="<b>To : </b><del>"+arr[i]['to']+"</del>&nbsp;<ins>"+flight['to']+"</ins><br>&nbsp;&nbsp;&nbsp;&nbsp;";
     }
+    temp+="<b>Tickets Booked : </b>"+arr[i]['seats']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;";
+    temp+="<b>Seat Number(s) : </b>"+arr[i]['allocated']+"<br>&nbsp;&nbsp;&nbsp;&nbsp;";
     temp+="<b>Status : </b> "+status+"<br><br></li>";
   }
   list.innerHTML=temp;
